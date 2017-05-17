@@ -1,0 +1,15 @@
+{
+  "name": "crawl_medium_dot_com",
+  "version": "1.0.0",
+  "description": "Crawl medium.com",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crawl",
+    "medium.com"
+  ],
+  "author": "Suraj Tripathi",
+  "license": "ISC"
+}

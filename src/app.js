@@ -42,9 +42,17 @@ function crawl(url_array, visited_array) {
 				console.log(err);
 			}
 			if(typeof body === 'string') {
-				extract_url(getURL(url_obj), body, urls_to_be_processed, visited);
+				let unique_url = extract_url(getURL(url_obj), body, visited);
+				urls_to_be_processed.push.apply(urls_to_be_processed, unique_url);
+				fs.appendFile('crawl.csv', '\n' + unique_url.join('\n'), function (error) {
+					if (error) {
+						console.log("Error: " , error);
+					}
+					callback();
+				});
+			} else {
+				callback();
 			}
-			callback();
 		});
 		
 	}, function(err) {
@@ -53,12 +61,7 @@ function crawl(url_array, visited_array) {
 		//To avoid max call stack
 		setTimeout(function(urls_to_be_processed, visited) {
 			if(urls_to_be_processed.length > 0){
-				fs.appendFile('crawl.csv', '\n' + urls_to_be_processed.join('\n'), function (error) {
-					if (error) {
-						console.log("Error: " , error);
-					}
-					crawl(urls_to_be_processed, visited);
-				});
+				crawl(urls_to_be_processed, visited);
 			} else {
 				console.log("Crawling done");
 			}
@@ -68,10 +71,11 @@ function crawl(url_array, visited_array) {
 
 
 
-function extract_url(base_url, body, urls, visited) {
+function extract_url(base_url, body, visited) {
 	let temp_href;
 	let temp_url
 	let current_match = '';
+	let response_array = [];
 	for(let i = 0; i < body.length; i++) {
 		if(body[i] === ' ') {
 			//ignore
@@ -93,7 +97,7 @@ function extract_url(base_url, body, urls, visited) {
 						temp_url = base_url + ((url_obj.path  &&  ((url_obj.path[0] != '/') ? ('/' + url_obj.path) :  url_obj.path)) || '');
 					}
 					if(!visited[temp_url]) {
-						urls.push(temp_url);
+						response_array.push(temp_url);
 						visited[temp_url] = true;
 					} else {
 						//console.log("URL already visited ", temp_url);
@@ -109,11 +113,12 @@ function extract_url(base_url, body, urls, visited) {
 			temp_href = '';
 		}
 	}
+	return response_array;
 }
 
 function startCrawling() {
 	//over write file if already existed
-	fs.writeFile('crawl.csv', 'URLS', function (error) {
+	fs.writeFile('crawl.csv', 'URLS\nhttp://medium.com', function (error) {
 		if (error) {
 			console.log("Error:" , error);
 		}
@@ -130,7 +135,7 @@ startCrawling();
 //So the program will not close instantly
 process.stdin.resume();
 function exitHandler(err) {
-	console("Exiting process");
+	console.log("Exiting process");
     process.exit();
 }
 

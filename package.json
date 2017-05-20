@@ -11,5 +11,9 @@
     "medium.com"
   ],
   "author": "Suraj Tripathi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.4.0",
+    "request": "^2.81.0"
+  }
 }

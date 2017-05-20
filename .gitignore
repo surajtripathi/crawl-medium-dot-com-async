@@ -1,1 +1,4 @@
 node_modules
+crawl.csv
+text.csv
+.DS_Store
